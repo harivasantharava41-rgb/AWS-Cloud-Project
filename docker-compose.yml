@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+
+  # MySQL Database Container
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: myappdb
+      MYSQL_USER: harivasanth
+      MYSQL_PASSWORD: hari123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
+
+  # Python Web Application Container
+  web-app:
+    build: .
+    container_name: webapp-container
+    restart: always
+    ports:
+      - "80:5000"
+    environment:
+      DB_HOST: mysql-db
+      DB_USER: harivasanth
+      DB_PASSWORD: hari123
+      DB_NAME: myappdb
+    depends_on:
+      - mysql-db
+    networks:
+      - app-network
+
+volumes:
+  mysql-data:
+
+networks:
+  app-network:
+    driver: bridge
